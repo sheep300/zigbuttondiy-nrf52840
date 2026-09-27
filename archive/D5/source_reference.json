@@ -1,0 +1,6 @@
+{
+  "original_osif": "C:/ncs/ncs-zigbee/subsys/osif/zb_nrf_platform.c",
+  "original_sha256": "38ede4d02d7b821bdf2e3dbcbe44b907f8a50bb9d45e03fa3064885c3764a8a8",
+  "baseline": "D, generated 2026-09-24",
+  "changes": "RAM timing around the unmodified k_poll call, plus on-demand LED readout; no sleep/radio policy change"
+}

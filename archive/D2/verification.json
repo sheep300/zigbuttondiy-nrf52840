@@ -1,0 +1,27 @@
+{
+  "sdk_osif_unchanged": true,
+  "osif_copy_only_adds_monitor_include_and_two_calls": true,
+  "generated_config_identical_to_D": true,
+  "all_five_partitions_unchanged": true,
+  "elf_segments": [
+    [
+      "0x26000",
+      "0x67a68"
+    ],
+    [
+      "0x67a68",
+      "0x68054"
+    ],
+    [
+      "0x68054",
+      "0x68058"
+    ]
+  ],
+  "monitor_variables_present_in_elf": true,
+  "uf2_check": "PASS: zephyr.uf2: 1057 blocks, [0x026000, 0x068100)\nSHA256: b44cd3d84ed283dbd56cc5fc2126299735809d181a13eaf2ccc106802a04d762\n",
+  "warnings": [
+    "lto-wrapper.exe: warning: using serial compilation of 9 LTRANS jobs",
+    "lto-wrapper.exe: warning: using serial compilation of 9 LTRANS jobs"
+  ],
+  "hardware_tested": false
+}

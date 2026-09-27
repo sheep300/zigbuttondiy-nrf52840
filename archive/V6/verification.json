@@ -1,0 +1,36 @@
+{
+  "partitions_preserved": true,
+  "source_matches_build": true,
+  "sdk_osif_unchanged": true,
+  "diagnostic_monitors_removed": true,
+  "uf2_check": "PASS: zephyr.uf2: 1107 blocks, [0x026000, 0x06b300)\nSHA256: d0cafe9069e4c81f37691edebe1868cbdb0a2117ee2e19dc2afa9b66fd16939f\n",
+  "warnings": [
+    "lto-wrapper.exe: warning: using serial compilation of 10 LTRANS jobs",
+    "lto-wrapper.exe: warning: using serial compilation of 10 LTRANS jobs"
+  ],
+  "host_tests_passed": true,
+  "hardware_tested": false,
+  "battery_calibration": "identity; needs paired measurement",
+  "elf_segments": [
+    [
+      "0x26000",
+      "0x6aaf8"
+    ],
+    [
+      "0x6aaf8",
+      "0x6b26c"
+    ],
+    [
+      "0x6b26c",
+      "0x6b270"
+    ]
+  ],
+  "source_sha256": {
+    "src\\battery_config.h": "61dd6b69fb362aca6cd6a7ce700a7a0613e062e70ff20f9f12321dd218e402cb",
+    "src\\battery_curve.h": "ea280c12075379d092ba986e535c1830911ff3863ea232e5aee216bfca2472e9",
+    "src\\main.c": "165dbf5429c7a988d711069aeca5fff4e3271c5104e54ebf22d5a5b3b2565a92",
+    "src\\toggle.c": "550799a068e9593ecef6f447517a3cf6c17500d626d990441ee27d92199515f4",
+    "src\\toggle.h": "874b2993328ba222378daf9f56b8e588849b88ae4a053f3ec46406d136e31ae3",
+    "src\\toggle_queue.h": "b1315cd26e31e005d919abcb0492523f333f8f663fc8018567f1b5c1f6fba443"
+  }
+}

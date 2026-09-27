@@ -1,4 +1,3 @@
-#include "pairing.h"
 #include "battery_curve.h"
 #include "toggle.h"
 #include <zephyr/kernel.h>
@@ -461,7 +460,7 @@ static void debounce_handler(struct k_work *work)
     int state = gpio_pin_get(gpio0, BUTTON_PIN);
     if (state < 0 || state == last_button_state) { return; }
     last_button_state = state;
-    if (!pairing_button()) { toggle_enqueue(); }
+    toggle_enqueue();
 }
 
 static void button_interrupt(
@@ -581,9 +580,6 @@ void zboss_signal_handler(zb_bufid_t bufid)
          ZB_GET_APP_SIGNAL_STATUS(bufid) == RET_OK)) {
         zigbee_configure_sleepy_behavior(true);
     }
-    if (pairing_signal(signal, ZB_GET_APP_SIGNAL_STATUS(bufid))) {
-        boot_report_sent = false;
-    }
     (void)zigbee_default_signal_handler(bufid);
     
     if (!boot_report_sent &&
@@ -602,7 +598,6 @@ int main(void)
 {
     int err;
     toggle_init();
-    pairing_init();
 
     err =
         button_init();

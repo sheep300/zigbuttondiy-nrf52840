@@ -1,0 +1,50 @@
+{
+  "sdk_osif_unchanged": true,
+  "d2_monitor_and_osif_copy_unchanged": true,
+  "generated_config_identical_to_D4": true,
+  "all_five_partitions_unchanged": true,
+  "sdk_transceiver_unchanged": true,
+  "source_files_identical_to_built_sources": true,
+  "elf_segments": [
+    [
+      "0x26000",
+      "0x67ed8"
+    ],
+    [
+      "0x67ed8",
+      "0x684c4"
+    ],
+    [
+      "0x684c4",
+      "0x684c8"
+    ]
+  ],
+  "monitor_variables_present_in_elf": true,
+  "uf2_check": "PASS: zephyr.uf2: 1061 blocks, [0x026000, 0x068500)\nSHA256: beaba306a0041138025752304cbc80382827f2367b57e047fb0df1b2722ad826\n",
+  "warnings": [
+    "lto-wrapper.exe: warning: using serial compilation of 9 LTRANS jobs",
+    "lto-wrapper.exe: warning: using serial compilation of 9 LTRANS jobs"
+  ],
+  "hardware_tested": false,
+  "sampler": {
+    "start_delay_s": 30,
+    "window_s": 120,
+    "interval_ms": [
+      50,
+      149
+    ],
+    "permanent_timer": false,
+    "current_measured": false
+  },
+  "source_hashes": {
+    "src\\d2_monitor.c": "b91a5f67a3f6449acc4c85c8361294159be21998a9ad095002f90d2d53c895b4",
+    "src\\d2_monitor.h": "bd2f246f73b3240ba5f0e0d5ecc7ce31c06bb7bba3a0c1f7c549811d9e0fa727",
+    "src\\d3_monitor.c": "a1469cba220e23ea8824daa0c8d0fb6377c494f9e88a736561d6b9ac28c623c0",
+    "src\\d3_monitor.h": "1afb1846c51860b4dd13f4608b2dc5fbd7f26285b7722666ed24dbc850366f9a",
+    "src\\d4_monitor.c": "378a10608d3df2ea5981de7c91a5a37aa0842160c584951b59c46e8735e490ee",
+    "src\\d4_monitor.h": "f752e31a60ccf56065cffc87aa0ab86c319e1d0f2c7d418919996eaf9edb669e",
+    "src\\main.c": "1fa0cfa3d69f17ba153d4b27b2b5925b24c5cc7ec0706a7721a295684131dff2",
+    "src\\zb_nrf_platform_d2.c": "959eb38ad94bafcace42de8ea2ab01e78d91b9f6ebcf6121c628fb1dce243d14",
+    "src\\zb_nrf_transceiver_d4.c": "605f7073ba174fa12563a29197c0197b45d6796290594f0c4319dfd1a7aa9e23"
+  }
+}

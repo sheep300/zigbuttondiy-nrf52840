@@ -1,1 +1,11 @@
 build*/
+**/build*/
+**/artifacts/
+__pycache__/
+*.pyc
+*.obj
+*.exe
+*.elf
+*.map
+.vscode/
+.env

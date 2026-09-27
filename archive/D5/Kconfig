@@ -1,0 +1,5 @@
+mainmenu "ZigButton controlled diagnostics"
+source "Kconfig.zephyr"
+config DIAG_ZIGBEE
+    bool "Enable Zigbee diagnostic D"
+    default n

@@ -1,0 +1,89 @@
+/*
+ * ZigButtonDIY
+ *
+ * Mémoire nice!nano / Pro Micro nRF52840 UF2 :
+ *
+ * 0x000000 - 0x026000 : SoftDevice S140
+ * 0x026000 - 0x0EB000 : Application
+ * 0x0EB000 - 0x0EC000 : ZBOSS Product Config
+ * 0x0EC000 - 0x0F4000 : ZBOSS NVRAM
+ * 0x0F4000 - 0x100000 : UF2 Bootloader
+ *
+ * Batterie :
+ *
+ * mesure directe de VDDH via l'entrée interne
+ * SAADC VDDHDIV5.
+ *
+ * Aucun GPIO externe n'est utilisé pour
+ * la mesure batterie.
+ */
+
+#include <zephyr/dt-bindings/adc/nrf-saadc.h>
+
+/ {
+    zephyr,user {
+        io-channels = <&adc 2>;
+    };
+};
+
+&adc {
+    status = "okay";
+
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    channel@2 {
+        reg = <2>;
+
+        /*
+         * Référence interne 0,6 V
+         * Gain 1/6
+         */
+        zephyr,gain = "ADC_GAIN_1_6";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+
+        /*
+         * Mesure interne :
+         *
+         * VDDH / 5
+         */
+        zephyr,input-positive = <NRF_SAADC_VDDHDIV5>;
+
+        zephyr,resolution = <12>;
+    };
+};
+
+
+/*
+ * ---------------------------------------------------------
+ * MEMOIRE
+ * ---------------------------------------------------------
+ *
+ * NE PAS TOUCHER AUX 48 Kio DU BOOTLOADER UF2.
+ */
+
+&code_partition {
+    reg = <0x00026000 0x000c5000>;
+};
+
+
+/delete-node/ &storage_partition;
+
+
+&flash0 {
+    partitions {
+
+        zboss_product_config: partition@eb000 {
+            compatible = "zephyr,mapped-partition";
+            label = "zboss-product-config";
+            reg = <0x000eb000 0x00001000>;
+        };
+
+        zboss_nvram: partition@ec000 {
+            compatible = "zephyr,mapped-partition";
+            label = "zboss-nvram";
+            reg = <0x000ec000 0x00008000>;
+        };
+    };
+};

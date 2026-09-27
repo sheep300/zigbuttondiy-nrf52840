@@ -1,6 +1,11 @@
-#include "pairing.h"
-#include "battery_curve.h"
-#include "toggle.h"
+/* LiPo 1S candidate: boot sample/report after join, then every 4 hours.
+ * No ADC/report in the button path. VDDH input and x5 preserved.
+ * This is NOT a single-factor C/D diagnostic and is not hardware calibrated.
+ * Confirm 3.7 V nominal / 4.2 V full and VDDH-to-battery tracking before relying
+ * on percentage. Never use the reported percentage as battery protection.
+ */
+
+
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
@@ -38,7 +43,7 @@ static struct k_work_delayable battery_work;
 static bool boot_report_sent;
 
 volatile uint32_t battery_adc_errors, battery_schedule_errors;
-volatile uint32_t zigbee_buffer_errors;
+volatile uint32_t toggle_schedule_errors, zigbee_buffer_errors;
 volatile int battery_last_mv;
 
 static const struct adc_dt_spec battery_adc =
@@ -294,6 +299,24 @@ static int battery_measure_mv(void)
     return (int)mv;
 }
 
+static uint8_t battery_percent_from_mv(int mv)
+{
+    static const struct { int mv; uint8_t percent; } curve[] = {
+        {3000, 0}, {3300, 1}, {3500, 5}, {3600, 10}, {3700, 25},
+        {3800, 45}, {3900, 65}, {4000, 80}, {4100, 90}, {4200, 100}
+    };
+    if (mv <= curve[0].mv) { return 0; }
+    for (size_t i = 1; i < ARRAY_SIZE(curve); i++) {
+        if (mv < curve[i].mv) {
+            return curve[i - 1].percent +
+                (mv - curve[i - 1].mv) *
+                (curve[i].percent - curve[i - 1].percent) /
+                (curve[i].mv - curve[i - 1].mv);
+        }
+    }
+    return 100;
+}
+
 static bool battery_measure_zigbee_values(
     zb_uint8_t *battery_voltage,
     zb_uint8_t *battery_percentage_remaining)
@@ -334,15 +357,6 @@ static bool battery_measure_zigbee_values(
         );
 
     return true;
-}
-
-volatile uint32_t battery_report_confirmed, battery_report_failed;
-static void battery_sent(zb_bufid_t bufid)
-{
-    zb_zcl_command_send_status_t *status = ZB_BUF_GET_PARAM(bufid, zb_zcl_command_send_status_t);
-    if (status->status == RET_OK) { battery_report_confirmed++; }
-    else { battery_report_failed++; }
-    zb_buf_free(bufid);
 }
 
 static void send_battery_report(
@@ -421,14 +435,73 @@ static void send_battery_report(
         dev_ctx.battery_percentage_remaining
     );
 
-    zb_addr_u address = {0};
-    address.addr_short = destination;
-    zb_ret_t result = zb_zcl_finish_and_send_packet(bufid, ptr, &address,
-        ZB_APS_ADDR_MODE_16_ENDP_PRESENT, 1, SWITCH_ENDPOINT,
-        ZB_AF_HA_PROFILE_ID, ZB_ZCL_CLUSTER_ID_POWER_CONFIG, battery_sent);
-    if (result != RET_OK) {
-        battery_report_failed++;
-        zb_buf_free(bufid);
+    ZB_ZCL_FINISH_PACKET(
+        bufid,
+        ptr
+    )
+
+    ZB_ZCL_SEND_COMMAND_SHORT(
+        bufid,
+
+        destination,
+
+        ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+
+        1,
+
+        SWITCH_ENDPOINT,
+
+        ZB_AF_HA_PROFILE_ID,
+
+        ZB_ZCL_CLUSTER_ID_POWER_CONFIG,
+
+        NULL
+    );
+}
+
+static void send_toggle(
+    zb_bufid_t bufid)
+{
+    zb_uint16_t destination =
+        0x0000;
+
+    if (!ZB_JOINED())
+    {
+        zb_buf_free(
+            bufid
+        );
+
+        return;
+    }
+
+    ZB_ZCL_ON_OFF_SEND_REQ(
+        bufid,
+
+        destination,
+
+        ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+
+        1,
+
+        SWITCH_ENDPOINT,
+
+        ZB_AF_HA_PROFILE_ID,
+
+        ZB_ZCL_DISABLE_DEFAULT_RESPONSE,
+
+        ZB_ZCL_CMD_ON_OFF_TOGGLE_ID,
+
+        NULL
+    );
+}
+
+static void zigbee_button_action(zb_uint8_t unused, zb_uint16_t unused2)
+{
+    ARG_UNUSED(unused);
+    ARG_UNUSED(unused2);
+    user_input_indicate();
+    if (zb_buf_get_out_delayed(send_toggle) != RET_OK) {
+        zigbee_buffer_errors++;
     }
 }
 
@@ -461,7 +534,9 @@ static void debounce_handler(struct k_work *work)
     int state = gpio_pin_get(gpio0, BUTTON_PIN);
     if (state < 0 || state == last_button_state) { return; }
     last_button_state = state;
-    if (!pairing_button()) { toggle_enqueue(); }
+    if (ZB_SCHEDULE_APP_CALLBACK2(zigbee_button_action, 0, 0) != RET_OK) {
+        toggle_schedule_errors++;
+    }
 }
 
 static void button_interrupt(
@@ -540,7 +615,6 @@ static int button_init(void)
         return err;
     }
 
-    if (last_button_state < 0) { return last_button_state; }
     return gpio_pin_interrupt_configure(
         gpio0,
 
@@ -576,14 +650,6 @@ static void zigbee_attributes_init(void)
 void zboss_signal_handler(zb_bufid_t bufid)
 {
     zb_zdo_app_signal_type_t signal = zb_get_app_signal(bufid, NULL);
-    if (signal == ZB_ZDO_SIGNAL_SKIP_STARTUP ||
-        ((signal == ZB_BDB_SIGNAL_DEVICE_FIRST_START || signal == ZB_BDB_SIGNAL_DEVICE_REBOOT) &&
-         ZB_GET_APP_SIGNAL_STATUS(bufid) == RET_OK)) {
-        zigbee_configure_sleepy_behavior(true);
-    }
-    if (pairing_signal(signal, ZB_GET_APP_SIGNAL_STATUS(bufid))) {
-        boot_report_sent = false;
-    }
     (void)zigbee_default_signal_handler(bufid);
     
     if (!boot_report_sent &&
@@ -601,8 +667,6 @@ void zboss_signal_handler(zb_bufid_t bufid)
 int main(void)
 {
     int err;
-    toggle_init();
-    pairing_init();
 
     err =
         button_init();
@@ -612,8 +676,13 @@ int main(void)
         return 0;
     }
 
-    err = battery_adc_init();
-    if (err != 0) { battery_adc_errors++; }
+    err =
+        battery_adc_init();
+
+    if (err != 0)
+    {
+        return 0;
+    }
 
     zigbee_attributes_init();
 

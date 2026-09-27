@@ -1,0 +1,39 @@
+{
+  "partitions_preserved": true,
+  "source_matches_build": true,
+  "sdk_osif_unchanged": true,
+  "diagnostic_monitors_removed": true,
+  "uf2_check": "PASS: zephyr.uf2: 1112 blocks, [0x026000, 0x06b800)\nSHA256: 9114b5960904b992efdad0b7665a823bc711c9f8e92ebbe6ef28f2bbfa5a8b76\n",
+  "warnings": [
+    "lto-wrapper.exe: warning: using serial compilation of 10 LTRANS jobs",
+    "lto-wrapper.exe: warning: using serial compilation of 10 LTRANS jobs"
+  ],
+  "host_tests_passed": true,
+  "hardware_tested": false,
+  "battery_calibration": "identity; needs paired measurement",
+  "elf_segments": [
+    [
+      "0x26000",
+      "0x6b008"
+    ],
+    [
+      "0x6b008",
+      "0x6b784"
+    ],
+    [
+      "0x6b784",
+      "0x6b788"
+    ]
+  ],
+  "source_sha256": {
+    "src\\battery_config.h": "61dd6b69fb362aca6cd6a7ce700a7a0613e062e70ff20f9f12321dd218e402cb",
+    "src\\battery_curve.h": "ea280c12075379d092ba986e535c1830911ff3863ea232e5aee216bfca2472e9",
+    "src\\gesture.h": "1740964b5107875501b4ce20fc39fc0536e81760918a5143c00b5aab57c0c697",
+    "src\\main.c": "025277f15bb7b69cf0a4dabf79f8de4bfd7740e4b32e4285f75b6116fe61552f",
+    "src\\pairing.c": "378b2a70d1c81b452cf654f10f6e432e2180585cde89ad44b4d6448811c972e6",
+    "src\\pairing.h": "46c91cd8acc67aba8e0d61a2052a76455bc1ad0e957695776d8d069d3bd9fd04",
+    "src\\toggle.c": "f3ab47ac69c50928c1a0e0fc4c9ac3e2e5eab718bb911c0a6eabfa3a8b12a853",
+    "src\\toggle.h": "8d61c4c60cc21094217fee2153e2625d5394f03bef30bfd286089eee63096e97",
+    "src\\toggle_queue.h": "b1315cd26e31e005d919abcb0492523f333f8f663fc8018567f1b5c1f6fba443"
+  }
+}
