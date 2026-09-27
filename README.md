@@ -1,6 +1,6 @@
 # ZigButtonDIY V7
 
-Version prête à flasher, avec reset d’appairage par l’interrupteur bistable. Le sommeil D5/V6, la file de toggles et la mesure LiPo sont conservés. Les tests logiciels et la compilation sont réalisés ; l’effacement puis l’appairage sur une carte réelle restent à valider.
+Version prête à flasher, avec reset d’appairage par l’interrupteur bistable. Le sommeil D5/V6, la file de toggles et la mesure LiPo sont conservés. Les tests logiciels et la compilation sont réalisés ; l’effacement puis le réappairage sur le même réseau ont été validés sur la carte le 27 septembre 2026.
 
 ## Installer sans perdre le réseau actuel
 
@@ -58,8 +58,8 @@ Résultats : `verification.json`, `artifacts/build.log`, `artifacts/tests.log`. 
 La zone application reste 0x26000..0xEB000 ; configuration produit 0xEB000..0xEC000 ; NVRAM 0xEC000..0xF4000 ; bootloader 0xF4000..0x100000 ; zone réservée 0..0x26000. Le contrôle UF2 vérifie chaque bloc. Le projet original et le SDK ne sont pas modifiés.
 
 
-## Historique et �tat de validation
+## Historique et état de validation
 
-Les anciennes versions sont dans `archive/`. La version courante et son fichier UF2 sont � la racine. Le SDK Nordic et l�add-on Zigbee doivent �tre install�s s�par�ment aux chemins utilis�s par les scripts et CMake.
+Les anciennes versions sont dans `archive/`. La version courante et son fichier UF2 sont à la racine. Le SDK Nordic et l’add-on Zigbee doivent être installés séparément aux chemins utilisés par les scripts et CMake.
 
-Sur la carte de l�utilisateur : toggles re�us, rapport batterie 88 %, d�part du r�seau puis nouvel appairage confirm� par Z2M et toggle apr�s r�appairage le 27 septembre 2026. Cela valide le r�appairage sur le m�me r�seau ; migration vers un autre r�seau, d�lai sans r�seau disponible et autonomie longue dur�e non test�s mat�riellement. Le probl�me transitoire des premi�res commandes apr�s d�marrage n�est pas d�clar� corrig�.
+Sur la carte de l’utilisateur : toggles reçus, rapport batterie 88 %, départ du réseau puis nouvel appairage confirmé par Z2M et toggle après réappairage le 27 septembre 2026. Cela valide le réappairage sur le même réseau ; migration vers un autre réseau, délai sans réseau disponible et autonomie longue durée non testés matériellement. Le problème transitoire des premières commandes après démarrage n’est pas déclaré corrigé.
